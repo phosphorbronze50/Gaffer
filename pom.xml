@@ -42,21 +42,22 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <skip.surefire.tests>false</skip.surefire.tests>
         <skip.failsafe.tests>false</skip.failsafe.tests>
-        <exclude.tests />
+        <exclude.tests/>
         <skip.jar-with-dependencies>false</skip.jar-with-dependencies>
         <shaded.jar.phase>package</shaded.jar.phase>
 
-        <java.version>1.8</java.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <java.version>11</java.version>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
         <scala.version>2.11</scala.version>
         <scala.minor.version>2.11.12</scala.minor.version>
 
         <!-- Dependency version properties -->
         <junit.version>4.12</junit.version>
         <junit5.version>5.6.0</junit5.version>
-        <mockito.version>1.9.5</mockito.version>
-        <failsafe.version>2.18.1</failsafe.version>
+        <surefire.plugin.version>3.0.0-M5</surefire.plugin.version>
+        <failsafe.version>3.0.0-M5</failsafe.version>
+        <mockito.version>3.3.3</mockito.version>
         <slf4j.api.version>1.7.25</slf4j.api.version>
 
         <koryphe.version>1.8.4</koryphe.version>
@@ -98,21 +99,24 @@
 
         <!-- Maven plugins -->
         <checkstyle.plugin.version>2.17</checkstyle.plugin.version>
-        <compiler.plugin.verson>2.3.2</compiler.plugin.verson>
+        <compiler.plugin.verson>3.8.1</compiler.plugin.verson>
         <dependency.plugin.version>2.10</dependency.plugin.version>
+        <enforcer.plugin.version>3.0.0-M3</enforcer.plugin.version>
         <findbugs.plugin.version>3.0.5</findbugs.plugin.version>
+        <spotbugs.plugin.version>4.0.4</spotbugs.plugin.version>
+        <spotbugs.project.version>4.1.0</spotbugs.project.version>
         <maven-war-plugin.version>3.0.0</maven-war-plugin.version>
         <gpg.plugin.version>1.6</gpg.plugin.version>
         <jacoco.plugin.version>0.7.7.201606060606</jacoco.plugin.version>
-        <jar.plugin.version>2.4</jar.plugin.version>
-        <javadoc.plugin.version>2.10.3</javadoc.plugin.version>
-        <nexus.plugin.version>1.6.7</nexus.plugin.version>
+        <jar.plugin.version>3.2.0</jar.plugin.version>
+        <javadoc.plugin.version>3.2.0</javadoc.plugin.version>
+        <minimum.maven.version>3.3.9</minimum.maven.version>
+        <nexus.plugin.version>1.6.8</nexus.plugin.version>
         <release.plugin.version>2.5.3</release.plugin.version>
         <scala.plugin.version>3.3.1</scala.plugin.version>
-        <scm.plugin.version>1.1</scm.plugin.version>
+        <scm.plugin.version>3.0.0</scm.plugin.version>
         <shade.plugin.version>2.4.1</shade.plugin.version>
-        <source.plugin.version>2.4</source.plugin.version>
-        <surefire.plugin.version>2.19.1</surefire.plugin.version>
+        <source.plugin.version>3.2.1</source.plugin.version>
         <tomcat-maven-plugin.version>2.2</tomcat-maven-plugin.version>
 
         <!-- Define SCM properties for use with Release Plugin -->
@@ -680,7 +684,7 @@
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
+            <artifactId>mockito-core</artifactId>
             <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
@@ -705,6 +709,7 @@
                     <configuration>
                         <source>${java.version}</source>
                         <target>${java.version}</target>
+                        <release>${java.version}</release>
                         <showDeprecation>true</showDeprecation>
                         <showWarnings>true</showWarnings>
                         <fork>true</fork>
@@ -716,6 +721,39 @@
         </pluginManagement>
 
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>${enforcer.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>enforce-maven</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>${minimum.maven.version}</version>
+                                </requireMavenVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>${spotbugs.plugin.version}</version>
+                <dependencies>
+                    <!-- overwrite dependency on spotbugs if you want to specify the version of spotbugs -->
+                    <dependency>
+                        <groupId>com.github.spotbugs</groupId>
+                        <artifactId>spotbugs</artifactId>
+                        <version>${spotbugs.project.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
             <plugin>
                 <groupId>com.github.ferstl</groupId>
                 <artifactId>depgraph-maven-plugin</artifactId>
@@ -838,40 +876,6 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>findbugs-maven-plugin</artifactId>
-                <version>${findbugs.plugin.version}</version>
-                <configuration>
-                    <effort>Low</effort>
-                    <threshold>Low</threshold>
-                    <xmlOutput>true</xmlOutput>
-                    <findbugsXmlOutputDirectory>
-                        ${project.build.directory}/findbugs
-                    </findbugsXmlOutputDirectory>
-                    <excludeFilterFile>
-                        findbugs-exclude.xml
-                    </excludeFilterFile>
-                    <onlyAnalyze>uk.gov.gchq.gaffer.*</onlyAnalyze>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>analyze-compile</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                        <configuration>
-                            <effort>Low</effort>
-                            <threshold>Low</threshold>
-                            <xmlOutput>true</xmlOutput>
-                            <findbugsXmlOutputDirectory>
-                                ${project.build.directory}/findbugs
-                            </findbugsXmlOutputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>${javadoc.plugin.version}</version>
@@ -942,7 +946,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>${failsafe.version}</version>
+                <version>${surefire.plugin.version}</version>
                 <reportSets>
                     <reportSet>
                         <id>integration-tests</id>
