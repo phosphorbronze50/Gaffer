@@ -54,9 +54,8 @@
 
         <!-- Dependency version properties -->
         <junit5.version>5.6.0</junit5.version>
-        <surefire.plugin.version>3.0.0-M5</surefire.plugin.version>
-        <failsafe.version>3.0.0-M5</failsafe.version>
         <mockito.version>3.3.3</mockito.version>
+        <failsafe.version>3.0.0-M5</failsafe.version>
         <slf4j.api.version>1.7.25</slf4j.api.version>
 
         <koryphe.version>1.10.0</koryphe.version>
@@ -101,9 +100,7 @@
         <compiler.plugin.verson>3.8.1</compiler.plugin.verson>
         <dependency.plugin.version>2.10</dependency.plugin.version>
         <enforcer.plugin.version>3.0.0-M3</enforcer.plugin.version>
-        <findbugs.plugin.version>3.0.5</findbugs.plugin.version>
         <spotbugs.plugin.version>4.0.4</spotbugs.plugin.version>
-        <spotbugs.project.version>4.1.0</spotbugs.project.version>
         <maven-war-plugin.version>3.0.0</maven-war-plugin.version>
         <gpg.plugin.version>1.6</gpg.plugin.version>
         <jacoco.plugin.version>0.7.7.201606060606</jacoco.plugin.version>
@@ -116,6 +113,7 @@
         <scm.plugin.version>3.0.0</scm.plugin.version>
         <shade.plugin.version>2.4.1</shade.plugin.version>
         <source.plugin.version>3.2.1</source.plugin.version>
+        <surefire.plugin.version>3.0.0-M5</surefire.plugin.version>
         <tomcat-maven-plugin.version>2.2</tomcat-maven-plugin.version>
 
         <!-- Define SCM properties for use with Release Plugin -->
@@ -708,7 +706,6 @@
                     <configuration>
                         <source>${java.version}</source>
                         <target>${java.version}</target>
-                        <release>${java.version}</release>
                         <showDeprecation>true</showDeprecation>
                         <showWarnings>true</showWarnings>
                         <fork>true</fork>
@@ -744,14 +741,6 @@
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-maven-plugin</artifactId>
                 <version>${spotbugs.plugin.version}</version>
-                <dependencies>
-                    <!-- overwrite dependency on spotbugs if you want to specify the version of spotbugs -->
-                    <dependency>
-                        <groupId>com.github.spotbugs</groupId>
-                        <artifactId>spotbugs</artifactId>
-                        <version>${spotbugs.project.version}</version>
-                    </dependency>
-                </dependencies>
             </plugin>
             <plugin>
                 <groupId>com.github.ferstl</groupId>
@@ -871,6 +860,42 @@
                         <goals>
                             <goal>check</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>${spotbugs.plugin.version}</version>
+                <configuration>
+                    <effort>Low</effort>
+                    <threshold>Low</threshold>
+                    <xmlOutput>true</xmlOutput>
+                    <spotbugsXmlOutputDirectory>
+                        ${project.build.directory}/spotbugs
+                    </spotbugsXmlOutputDirectory>
+                    <spotbugsXmlOutputFilename>findbugs.xml</spotbugsXmlOutputFilename>
+                    <excludeFilterFile>
+                        spotbugs-exclude.xml
+                    </excludeFilterFile>
+                    <onlyAnalyze>uk.gov.gchq.gaffer.*</onlyAnalyze>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>analyze-compile</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <effort>Low</effort>
+                            <threshold>Low</threshold>
+                            <xmlOutput>true</xmlOutput>
+                            <spotbugsXmlOutputDirectory>
+                                ${project.build.directory}/spotbugs
+                            </spotbugsXmlOutputDirectory>
+                            <spotbugsXmlOutputFilename>findbugs.xml</spotbugsXmlOutputFilename>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -1126,9 +1151,9 @@
                         </configuration>
                     </plugin>
                     <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>findbugs-maven-plugin</artifactId>
-                        <version>${findbugs.plugin.version}</version>
+                        <groupId>com.github.spotbugs</groupId>
+                        <artifactId>spotbugs-maven-plugin</artifactId>
+                        <version>${spotbugs.plugin.version}</version>
                         <configuration>
                             <fork>false</fork>
                         </configuration>
@@ -1283,9 +1308,9 @@
                         </configuration>
                     </plugin>
                     <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>findbugs-maven-plugin</artifactId>
-                        <version>${findbugs.plugin.version}</version>
+                        <groupId>com.github.spotbugs</groupId>
+                        <artifactId>spotbugs-maven-plugin</artifactId>
+                        <version>${spotbugs.plugin.version}</version>
                         <configuration>
                             <fork>false</fork>
                         </configuration>
