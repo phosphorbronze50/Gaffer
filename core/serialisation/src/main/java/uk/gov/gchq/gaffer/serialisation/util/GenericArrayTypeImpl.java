@@ -48,7 +48,7 @@ import java.lang.reflect.Type;
 /**
  * Implementation of GenericArrayType interface for core reflection.
  */
-public final class GenericArrayTypeImpl
+final class GenericArrayTypeImpl
         implements GenericArrayType {
     private Type genericComponentType;
 
