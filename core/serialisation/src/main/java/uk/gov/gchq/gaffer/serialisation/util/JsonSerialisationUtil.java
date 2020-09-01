@@ -24,7 +24,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
 import org.apache.commons.lang3.reflect.TypeUtils;
-import sun.reflect.generics.reflectiveObjects.GenericArrayTypeImpl;
 
 import uk.gov.gchq.koryphe.serialisation.json.SimpleClassNameIdResolver;
 
