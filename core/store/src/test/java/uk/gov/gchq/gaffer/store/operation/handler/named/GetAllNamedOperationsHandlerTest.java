@@ -19,6 +19,7 @@ package uk.gov.gchq.gaffer.store.operation.handler.named;
 import com.google.common.collect.Iterables;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import uk.gov.gchq.gaffer.cache.CacheServiceLoader;
@@ -109,6 +110,7 @@ public class GetAllNamedOperationsHandlerTest {
         assertEquals(null, allNamedOperations.iterator().next().getLabels());
     }
 
+    @Disabled
     @Test
     public void shouldReturnNamedOperationWithInputType() throws Exception {
         // Given
