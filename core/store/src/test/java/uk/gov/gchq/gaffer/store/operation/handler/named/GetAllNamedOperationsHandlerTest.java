@@ -110,7 +110,7 @@ public class GetAllNamedOperationsHandlerTest {
         assertEquals(null, allNamedOperations.iterator().next().getLabels());
     }
 
-    @Disabled
+    @Disabled("This test fails due to a serialisation/deserialisation issue. It needs to be reviewed and fixed.")
     @Test
     public void shouldReturnNamedOperationWithInputType() throws Exception {
         // Given
